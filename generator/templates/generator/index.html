@@ -1,0 +1,344 @@
+{% extends "base.html" %} {% block title %}QR Code Generator{% endblock %}
+{%block content %}
+<div class="qr-page">
+  <header class="page-header">
+    <h1>QR Code Generator</h1>
+    <p class="subtitle">Create, customize, and download QR codes in seconds.</p>
+  </header>
+
+  <div class="qr-layout">
+    <!-- QR Code Form -->
+    <section class="qr-card">
+      <h2>Create QR Code</h2>
+
+      <form method="post" enctype="multipart/form-data" id="qr-form">
+        {% csrf_token %}
+
+        <div class="field">
+          <label for="title">Title (optional)</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            maxlength="100"
+            value="{{ title|default:'' }}"
+            placeholder="My website QR"
+          />
+        </div>
+
+        <!-- QR Type -->
+        <div class="field">
+          <label for="qr_type">QR Code Type</label>
+
+          <select id="qr_type" name="qr_type">
+            {% if qr_type == "text" or not qr_type %}
+            <option value="text" selected>Text / URL</option>
+            {% else %}
+            <option value="text">Text / URL</option>
+            {% endif %} {% if qr_type == "wifi" %}
+            <option value="wifi" selected>Wi-Fi</option>
+            {% else %}
+            <option value="wifi">Wi-Fi</option>
+            {% endif %} {% if qr_type == "email" %}
+            <option value="email" selected>Email</option>
+            {% else %}
+            <option value="email">Email</option>
+            {% endif %} {% if qr_type == "phone" %}
+            <option value="phone" selected>Phone</option>
+            {% else %}
+            <option value="phone">Phone</option>
+            {% endif %} {% if qr_type == "vcard" %}
+            <option value="vcard" selected>Contact card</option>
+            {% else %}
+            <option value="vcard">Contact card</option>
+            {% endif %}
+          </select>
+        </div>
+
+        <!-- Text / URL Fields -->
+        <div class="field type-fields" data-type="text">
+          <label for="text">Text or URL</label>
+
+          <textarea
+            id="text"
+            name="text"
+            maxlength="2000"
+            placeholder="https://example.com"
+          >
+{{ text|default:'' }}</textarea
+          >
+        </div>
+
+        <!-- Wi-Fi Fields -->
+        <div class="type-fields" data-type="wifi" hidden>
+          <div class="field">
+            <label for="ssid">Wi-Fi Network Name</label>
+            <input type="text" id="ssid" name="ssid" maxlength="200" value="{{ ssid|default:'' }}" />
+          </div>
+
+          <div class="field">
+            <label for="password">Wi-Fi Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              maxlength="200"
+            />
+          </div>
+
+          <div class="field">
+            <label for="security">Security</label>
+
+            <select id="security" name="security">
+              <option value="WPA" {% if security == "WPA" %}selected{% endif %}>WPA / WPA2 / WPA3</option>
+              <option value="WEP" {% if security == "WEP" %}selected{% endif %}>WEP</option>
+              <option value="nopass" {% if security == "nopass" %}selected{% endif %}>Open network</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Email Fields -->
+        <div class="type-fields" data-type="email" hidden>
+          <div class="field">
+            <label for="address">Email Address</label>
+            <input type="email" id="address" name="address" maxlength="254" value="{{ address|default:'' }}" />
+          </div>
+
+          <div class="field">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" maxlength="200" value="{{ subject|default:'' }}" />
+          </div>
+
+          <div class="field">
+            <label for="body">Message</label>
+            <textarea id="body" name="body" maxlength="1000">{{ body|default:'' }}</textarea>
+          </div>
+        </div>
+
+        <!-- Phone Fields -->
+        <div class="type-fields" data-type="phone" hidden>
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              maxlength="30"
+              value="{{ phone|default:'' }}"
+              placeholder="+911234567890"
+            />
+          </div>
+        </div>
+
+        <!-- Contact Card Fields -->
+        <div class="type-fields" data-type="vcard" hidden>
+          <div class="field">
+            <label for="contact-name">Full Name</label>
+            <input type="text" id="contact-name" name="name" maxlength="100" value="{{ name|default:'' }}" />
+          </div>
+
+          <div class="field">
+            <label for="contact-phone">Phone Number</label>
+            <input type="tel" id="contact-phone" name="phone" maxlength="30" value="{{ phone|default:'' }}" />
+          </div>
+
+          <div class="field">
+            <label for="contact-email">Email Address</label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              maxlength="254"
+              value="{{ email|default:'' }}"
+            />
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- Customization -->
+        <h3>Customize Your QR Code</h3>
+
+        <div class="customization-grid">
+          <div class="field">
+            <label for="foreground_color"> Foreground Color </label>
+
+            <input
+              type="color"
+              id="foreground_color"
+              name="foreground_color"
+              value="{{ foreground_color|default:'#000000' }}"
+            />
+          </div>
+
+          <div class="field">
+            <label for="background_color"> Background Color </label>
+
+            <input
+              type="color"
+              id="background_color"
+              name="background_color"
+              value="{{ background_color|default:'#ffffff' }}"
+            />
+          </div>
+        </div>
+
+        <!-- QR Size -->
+        <div class="field">
+          <label for="box_size">
+            QR Size: <span id="size-value">10</span>
+          </label>
+
+          <input
+            type="range"
+            id="box_size"
+            name="box_size"
+            min="4"
+            max="20"
+            value="{{ box_size|default:10 }}"
+          />
+
+          <small> Controls the size of each QR code module. </small>
+        </div>
+
+        <!-- Output Format -->
+        <div class="field">
+          <label for="output_format">Download Format</label>
+
+          <select id="output_format" name="output_format">
+            {% if output_format == "svg" %}
+            <option value="png">PNG Image</option>
+            <option value="svg" selected>SVG Vector</option>
+            {% else %}
+            <option value="png" selected>PNG Image</option>
+            <option value="svg">SVG Vector</option>
+            {% endif %}
+          </select>
+        </div>
+
+        <!-- Logo Upload -->
+        <div class="field">
+          <label for="logo">Center Logo (PNG or JPEG)</label>
+
+          <input
+            type="file"
+            id="logo"
+            name="logo"
+            accept="image/png,image/jpeg"
+          />
+
+          <small id="logo-help">
+            PNG or JPEG logos can be used with PNG or SVG output.
+          </small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Generate QR Code</button>
+          <button type="button" id="clear-form" class="secondary-button">
+            Clear
+          </button>
+        </div>
+      </form>
+
+      {% if error %}
+      <p class="error" role="alert">{{ error }}</p>
+      {% endif %}
+    </section>
+
+    <!-- QR Code Result -->
+    <section class="qr-card result-card">
+      <h2>Your QR Code</h2>
+
+      {% if qr_code %}
+      <div class="qr-preview">
+        <img id="generated-qr" src="{{ qr_code }}" alt="Generated QR code" />
+      </div>
+
+      <p class="result-title">{{ title|default:"Generated QR Code" }}</p>
+
+      <a
+        id="download-qr"
+        class="primary-button download-button"
+        href="{{ qr_code }}"
+        download="{{ download_filename }}"
+      >
+        Download {{ output_format|upper|default:"PNG" }}
+      </a>
+
+      {% else %}
+      <div class="empty-state">
+        <p>Your generated QR code will appear here.</p>
+        <p class="subtitle">Enter your details and select Generate.</p>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+
+  <!-- QR History -->
+  {% if qr_history %}
+
+  <section class="qr-card history-card">
+    <h2>Recent QR Codes</h2>
+
+    <div class="history-list">
+      {% for item in qr_history %}
+
+      <article class="history-item">
+        <div>
+          <strong> {{ item.title|default:"Untitled QR Code" }} </strong>
+
+          <p class="subtitle">
+            {{ item.get_qr_type_display }} · {{ item.created_at|date:"d M Y, H:i" }}
+          </p>
+        </div>
+
+        <span class="format-badge"> {{ item.output_format|upper }} </span>
+      </article>
+
+      {% endfor %}
+    </div>
+  </section>
+
+  {% endif %}
+</div>
+
+<script>
+  const typeSelect = document.getElementById("qr_type");
+  const formatSelect = document.getElementById("output_format");
+  const sizeInput = document.getElementById("box_size");
+  const sizeValue = document.getElementById("size-value");
+  const clearButton = document.getElementById("clear-form");
+
+  function updateFields() {
+    document.querySelectorAll(".type-fields").forEach((section) => {
+      const active = section.dataset.type === typeSelect.value;
+
+      section.hidden = !active;
+
+      section.querySelectorAll("input, textarea, select").forEach((input) => {
+        input.disabled = !active;
+      });
+    });
+
+    const isSvg = formatSelect.value === "svg";
+
+    document.getElementById("logo-help").textContent = isSvg
+      ? "The PNG or JPEG logo will be embedded in the SVG file."
+      : "A small logo can make your QR code less scannable.";
+  }
+
+  typeSelect.addEventListener("change", updateFields);
+  formatSelect.addEventListener("change", updateFields);
+
+  sizeInput.addEventListener("input", () => {
+    sizeValue.textContent = sizeInput.value;
+  });
+
+  clearButton.addEventListener("click", () => {
+    window.location.assign("{% url 'QR Code' %}");
+  });
+
+  updateFields();
+  sizeValue.textContent = sizeInput.value;
+</script>
+{% endblock %}
