@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Generator</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #f3f4f6;
+        font-family: Arial, sans-serif;
+        color: #111827;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+        padding: 32px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px #0000000d;
+      }
+
+      h1 {
+        margin-top: 0;
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 28px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 110px;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font: inherit;
+        resize: vertical;
+      }
+
+      button,
+      .download {
+        display: block;
+        width: 100%;
+        margin-top: 16px;
+        padding: 13px;
+        border: 0;
+        border-radius: 8px;
+        background: #4f46e5;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      button:hover,
+      .download:hover {
+        background: #4338ca;
+      }
+
+      .result {
+        margin-top: 28px;
+        text-align: center;
+      }
+
+      .result img {
+        display: block;
+        width: 240px;
+        max-width: 100%;
+        height: auto;
+        margin: 16px auto;
+      }
+
+      .error {
+        margin-top: 12px;
+        color: #dc2626;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="container">
+      <h1>QR Code Generator</h1>
+      <p class="subtitle">Turn any text or URL into a QR code.</p>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <label for="text">Enter text or URL</label>
+
+        <textarea
+          id="text"
+          name="text"
+          maxlength="2000"
+          placeholder="https://example.com"
+          required
+        >
+{{ text }}</textarea
+        >
+
+        <button type="submit">Generate QR Code</button>
+      </form>
+
+      {% if text and not qr_code %}
+      <p class="error">Please enter valid text with at most 2000 characters.</p>
+      {% endif %} {% if qr_code %}
+      <section class="result">
+        <h2>Your QR Code</h2>
+
+        <img
+          src="data:image/png;base64,{{ qr_code }}"
+          alt="Generated QR code"
+        />
+
+        <a
+          class="download"
+          href="data:image/png;base64,{{ qr_code }}"
+          download="qr-code.png"
+        >
+          Download PNG
+        </a>
+      </section>
+      {% endif %}
+    </main>
+  </body>
+</html>
