@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}QR Code Generator{% endblock %}</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #f3f4f6;
+        font-family: Arial, sans-serif;
+        color: #111827;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+        padding: 32px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px #0000000d;
+      }
+
+      h1 {
+        margin-top: 0;
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 28px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 110px;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font: inherit;
+        resize: vertical;
+      }
+
+      button,
+      .download {
+        display: block;
+        width: 100%;
+        margin-top: 16px;
+        padding: 13px;
+        border: 0;
+        border-radius: 8px;
+        background: #4f46e5;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      button:hover,
+      .download:hover {
+        background: #4338ca;
+      }
+
+      .result {
+        margin-top: 28px;
+        text-align: center;
+      }
+
+      .result img {
+        display: block;
+        width: 240px;
+        max-width: 100%;
+        height: auto;
+        margin: 16px auto;
+      }
+
+      .error {
+        margin-top: 12px;
+        color: #dc2626;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="container">
+      <div>{% block content %} {% endblock %}</div>
+    </main>
+  </body>
+</html>

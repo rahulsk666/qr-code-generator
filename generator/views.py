@@ -6,7 +6,7 @@ import qrcode
 from django.shortcuts import render
 
 
-def index(request):
+def qr(request):
     qr_code = None
     text = ""
 
