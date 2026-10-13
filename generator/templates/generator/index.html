@@ -327,6 +327,22 @@
       : "A small logo can make your QR code less scannable.";
   }
 
+  function sizeHistoryList() {
+    const historyList = document.querySelector(".history-list");
+    if (!historyList) return;
+
+    const items = Array.from(historyList.children);
+    if (items.length <= 5) {
+      historyList.style.maxHeight = "";
+      return;
+    }
+
+    const fiveRowsHeight = items
+      .slice(0, 5)
+      .reduce((height, item) => height + item.getBoundingClientRect().height, 0);
+    historyList.style.maxHeight = `${fiveRowsHeight}px`;
+  }
+
   typeSelect.addEventListener("change", updateFields);
   formatSelect.addEventListener("change", updateFields);
 
@@ -339,6 +355,8 @@
   });
 
   updateFields();
+  sizeHistoryList();
+  window.addEventListener("resize", sizeHistoryList);
   sizeValue.textContent = sizeInput.value;
 </script>
 {% endblock %}

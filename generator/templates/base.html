@@ -1,13 +1,39 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'generator/favicon.png' %}"
+    />
     <title>{% block title %}QR Code Generator{% endblock %}</title>
 
     <style>
       * {
         box-sizing: border-box;
+      }
+
+      .site-header {
+        margin-bottom: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #111827;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .brand img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
       }
 
       body {
@@ -255,6 +281,11 @@
         margin-top: 24px;
       }
 
+      .history-list {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
       .history-item {
         display: flex;
         justify-content: space-between;
@@ -328,6 +359,15 @@
   </head>
 
   <body>
+    <header class="site-header">
+      <a href="/" class="brand">
+        <img
+          src="{% static 'generator/logo.png' %}"
+          alt="QR Code Generator logo"
+        />
+        <span>QR Code Generator</span>
+      </a>
+    </header>
     <main class="container">{% block content %}{% endblock %}</main>
   </body>
 </html>
