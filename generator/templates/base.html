@@ -13,8 +13,6 @@
       body {
         margin: 0;
         min-height: 100vh;
-        display: grid;
-        place-items: center;
         padding: 24px;
         background: #f3f4f6;
         font-family: Arial, sans-serif;
@@ -23,60 +21,215 @@
 
       .container {
         width: 100%;
-        max-width: 480px;
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 32px;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 8px 30px #0000000d;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 30px rgb(0 0 0 / 5%);
       }
 
-      h1 {
-        margin-top: 0;
+      .qr-page {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 20px;
+      }
+
+      .page-header {
+        margin-bottom: 32px;
         text-align: center;
+      }
+
+      .page-header h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        line-height: 1.2;
       }
 
       .subtitle {
-        text-align: center;
+        margin: 0;
         color: #6b7280;
-        margin-bottom: 28px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        text-align: center;
       }
 
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-      }
-
-      textarea {
+      .qr-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 24px;
+        align-items: start;
         width: 100%;
-        min-height: 110px;
+      }
+
+      .qr-card {
+        min-width: 0;
+        padding: 28px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 4px 18px rgb(0 0 0 / 4%);
+      }
+
+      .qr-card h2 {
+        margin: 0 0 24px;
+        font-size: 1.5rem;
+        line-height: 1.3;
+      }
+
+      .qr-card h3 {
+        margin: 24px 0 16px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        min-width: 0;
+        margin-bottom: 20px;
+      }
+
+      .field label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+
+      .field input:not([type="color"]):not([type="range"]),
+      .field textarea,
+      .field select {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
         padding: 12px;
         border: 1px solid #d1d5db;
-        border-radius: 8px;
+        border-radius: 9px;
+        background: #fff;
+        color: #111827;
         font: inherit;
+      }
+
+      .field textarea {
+        min-height: 110px;
         resize: vertical;
       }
 
-      button,
+      .field input[type="color"] {
+        width: 100%;
+        height: 44px;
+        padding: 4px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .field input[type="range"] {
+        width: 100%;
+        accent-color: #4f46e5;
+      }
+
+      .field input[type="file"] {
+        max-width: 100%;
+        font-size: 0.85rem;
+      }
+
+      .field small {
+        color: #6b7280;
+        line-height: 1.5;
+      }
+
+      .customization-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .primary-button,
       .download {
         display: block;
         width: 100%;
-        margin-top: 16px;
-        padding: 13px;
+        padding: 13px 16px;
         border: 0;
-        border-radius: 8px;
+        border-radius: 9px;
         background: #4f46e5;
-        color: white;
-        font-size: 16px;
+        color: #fff;
+        font: inherit;
         font-weight: 600;
+        line-height: 1.4;
         text-align: center;
         text-decoration: none;
         cursor: pointer;
       }
 
-      button:hover,
+      .primary-button:hover,
       .download:hover {
         background: #4338ca;
+      }
+
+      .form-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .secondary-button {
+        display: block;
+        width: 100%;
+        padding: 13px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        background: #fff;
+        color: #374151;
+        font: inherit;
+        font-weight: 600;
+        line-height: 1.4;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .secondary-button:hover {
+        background: #f3f4f6;
+      }
+
+      .qr-preview,
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-width: 0;
+        min-height: 320px;
+        padding: 24px;
+        border: 1px dashed #d1d5db;
+        border-radius: 12px;
+        background: #f9fafb;
+        text-align: center;
+      }
+
+      .qr-preview img {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        max-height: 320px;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .empty-state p {
+        max-width: 300px;
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+
+      .result-title {
+        margin: 18px 0;
+        font-weight: 600;
+        text-align: center;
       }
 
       .result {
@@ -93,15 +246,88 @@
       }
 
       .error {
-        margin-top: 12px;
-        color: #dc2626;
+        margin-top: 14px;
+        color: #b91c1c;
+        line-height: 1.5;
+      }
+
+      .history-card {
+        margin-top: 24px;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .history-item:last-child {
+        border-bottom: 0;
+      }
+
+      .history-item p {
+        margin: 6px 0 0;
+      }
+
+      .format-badge {
+        flex-shrink: 0;
+        padding: 5px 9px;
+        border-radius: 6px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      @media (max-width: 850px) {
+        body {
+          padding: 16px;
+        }
+
+        .container {
+          padding: 20px;
+        }
+
+        .qr-page {
+          padding: 16px 0;
+        }
+
+        .qr-layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+
+        .container {
+          padding: 12px;
+          border-radius: 16px;
+        }
+
+        .qr-card {
+          padding: 18px;
+        }
+
+        .customization-grid {
+          gap: 12px;
+        }
+
+        .qr-preview,
+        .empty-state {
+          min-height: 240px;
+          padding: 16px;
+        }
       }
     </style>
   </head>
 
   <body>
-    <main class="container">
-      <div>{% block content %} {% endblock %}</div>
-    </main>
+    <main class="container">{% block content %}{% endblock %}</main>
   </body>
 </html>

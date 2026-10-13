@@ -1,46 +1,98 @@
-
 import base64
-from io import BytesIO
 
-import qrcode
+from django.core.exceptions import ValidationError
+from django.template.defaultfilters import slugify
 from django.shortcuts import render
+
+from .models import QRCode
+from .services import build_payload, generate_qr
 
 
 def qr(request):
-    qr_code = None
-    text = ""
+    context = {
+        "qr_type": "text",
+        "text": "",
+        "box_size": 10,
+        "foreground_color": "#000000",
+        "background_color": "#ffffff",
+        "output_format": "png",
+        "security": "WPA",
+        "qr_history": QRCode.objects.all()[:100],
+    }
 
     if request.method == "POST":
-        text = request.POST.get("text", "").strip()
+        form_data = request.POST.copy()
+        form_data["content"] = form_data.get("text", "")
+        logo = request.FILES.get("logo")
 
-        if text and len(text) <= 2000:
-            qr = qrcode.QRCode(
-                version=None,
-                error_correction=qrcode.constants.ERROR_CORRECT_M,
-                box_size=10,
-                border=4,
+        context.update({
+            "title": request.POST.get("title", ""),
+            "qr_type": request.POST.get("qr_type", "text"),
+            "text": request.POST.get("text", ""),
+            "ssid": request.POST.get("ssid", ""),
+            "password": request.POST.get("password", ""),
+            "security": request.POST.get("security", "WPA"),
+            "address": request.POST.get("address", ""),
+            "subject": request.POST.get("subject", ""),
+            "body": request.POST.get("body", ""),
+            "phone": request.POST.get("phone", ""),
+            "name": request.POST.get("name", ""),
+            "email": request.POST.get("email", ""),
+            "foreground_color": request.POST.get(
+                "foreground_color", "#000000"
+            ),
+            "background_color": request.POST.get(
+                "background_color", "#ffffff"
+            ),
+            "box_size": request.POST.get("box_size", "10"),
+            "output_format": request.POST.get("output_format", "png"),
+        })
+
+        try:
+            content = build_payload(context["qr_type"], form_data)
+            box_size = int(context["box_size"])
+            output_format = context["output_format"]
+            image_bytes = generate_qr(
+                content=content,
+                foreground=context["foreground_color"],
+                background=context["background_color"],
+                box_size=box_size,
+                output_format=output_format,
+                logo=logo,
             )
 
-            qr.add_data(text)
-            qr.make(fit=True)
-
-            image = qr.make_image(
-                fill_color="black",
-                back_color="white",
+            title = context["title"][:100]
+            record = QRCode.objects.create(
+                title=title,
+                qr_type=context["qr_type"],
+                content=content,
+                foreground_color=context["foreground_color"],
+                background_color=context["background_color"],
+                box_size=box_size,
+                output_format=output_format,
             )
 
-            buffer = BytesIO()
-            image.save(buffer, format="PNG")
+            if output_format == "svg":
+                content_type = "image/svg+xml"
+                extension = "svg"
+            else:
+                content_type = "image/png"
+                extension = "png"
 
-            qr_code = base64.b64encode(
-                buffer.getvalue()
-            ).decode("utf-8")
+            safe_title = slugify(record.title) or "code"
+            context.update({
+                "qr_code": (
+                    f"data:{content_type};base64,"
+                    f"{base64.b64encode(image_bytes).decode('ascii')}"
+                ),
+                "download_filename": f"qr-{safe_title}.{extension}",
+                "qr_history": QRCode.objects.all()[:100],
+            })
+        except (ValidationError, ValueError, TypeError, OSError) as exc:
+            if isinstance(exc, ValidationError):
+                message = "; ".join(exc.messages)
+            else:
+                message = str(exc)
+            context["error"] = message
 
-    return render(
-        request,
-        "generator/index.html",
-        {
-            "qr_code": qr_code,
-            "text": text,
-        },
-    )
+    return render(request, "generator/index.html", context)
